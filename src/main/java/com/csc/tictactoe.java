@@ -4,114 +4,103 @@ import java.util.Scanner;
 
 public class tictactoe {
     Scanner input = new Scanner(System.in);
-    char[][] board = {
-            { ' ', ' ', ' ' },
-            { ' ', ' ', ' ' },
-            { ' ', ' ', ' ' } };
+    private static char player = 'X';
+    private static final char[][] board = { { ' ', ' ', ' ' }, { ' ', ' ', ' ' }, { ' ', ' ', ' ' } };
 
-    public void winner(char[][] board) {
-        if (board[0][0] == 'X' && board[0][1] == 'X' && board[0][2] == 'X' // check for P1
-                || board[1][0] == 'X' && board[1][1] == 'X' && board[1][2] == 'X'
-                || board[2][0] == 'X' && board[2][1] == 'X' && board[2][2] == 'X'
-                || board[0][0] == 'X' && board[1][0] == 'X' && board[2][0] == 'X'
-                || board[0][1] == 'X' && board[1][1] == 'X' && board[2][1] == 'X'
-                || board[0][2] == 'X' && board[1][2] == 'X' && board[2][2] == 'X'
-                || board[0][0] == 'X' && board[1][1] == 'X' && board[2][2] == 'X'
-                || board[0][2] == 'X' && board[1][1] == 'X' && board[2][0] == 'X') {
-            System.out.print("Player 1 wins!!");
-            System.exit(0);
+    public static boolean winner() {
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == player && board[i][1] == player && board[i][2] == player ||
+                    board[i][0] == player && board[i][1] == player && board[i][2] == player)
+                return true;
         }
-        if (board[0][0] == 'O' && board[0][1] == 'O' && board[0][2] == 'O'// check for P2
-                || board[1][0] == 'O' && board[1][1] == 'O' && board[1][2] == 'O'
-                || board[2][0] == 'O' && board[2][1] == 'O' && board[2][2] == 'O'
-                || board[0][0] == 'O' && board[1][0] == 'O' && board[2][0] == 'O'
-                || board[0][1] == 'O' && board[1][1] == 'O' && board[2][1] == 'O'
-                || board[0][2] == 'O' && board[1][2] == 'O' && board[2][2] == 'O'
-                || board[0][0] == 'O' && board[1][1] == 'O' && board[2][2] == 'O'
-                || board[0][2] == 'O' && board[1][1] == 'O' && board[2][0] == 'O') {
-            System.out.print("Player 2 wins!!");
-            System.exit(0);
+        return board[0][0] == player && board[1][1] == player && board[2][2] == player
+                || board[0][2] == player && board[1][1] == player && board[2][0] == player;
+    }
+
+    private static boolean isdraw() {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                if (board[i][j] == ' ')
+                    return false;
+        System.out.print("Draw!!");
+        return true;
+    }
+
+    private static void playerswitch() {
+        if (player == 'X')
+            player = 'O';
+        else
+            player = 'X';
+    }
+
+    private static boolean again(String input) {
+        if ("y".equals(input)) {
+            for (int i = 0; i < 3; i++)
+                for (int j = 0; j < 3; j++)
+                    board[i][j] = ' ';
+            if (player == 'O')
+                playerswitch();
+            return true;
         }
+        return false;
     }
 
-    public static boolean isempty(char[][] board, int turn) {
-        return switch (turn) {
-            case 1 -> board[0][0] == ' ';
-            case 2 -> board[0][1] == ' ';
-            case 3 -> board[0][2] == ' ';
-            case 4 -> board[1][0] == ' ';
-            case 5 -> board[1][1] == ' ';
-            case 6 -> board[1][2] == ' ';
-            case 7 -> board[2][0] == ' ';
-            case 8 -> board[2][1] == ' ';
-            case 9 -> board[2][2] == ' ';
-            default -> false;
-        };
+    private static boolean isvalid(String turn) {
+        if (turn.length() != 1 || !Character.isDigit(turn.charAt(0)))
+            return false;
+        int move = Integer.parseInt(turn);
+        if (move < 1 || move > 9)
+            return false;
+        int row = (move - 1) / 3;
+        int column = (move - 1) % 3;
+        return board[row][column] == ' ';
     }
 
-    public void layout() {
-        System.out.println(board[0][0] + " | " + board[0][1] + " | " + board[0][2]);
-        System.out.println("- + - + -");
-        System.out.println(board[1][0] + " | " + board[1][1] + " | " + board[1][2]);
-        System.out.println("- + - + -");
-        System.out.println(board[2][0] + " | " + board[2][1] + " | " + board[2][2]);
+    public static void layout() {
+        System.out.println("\n");
+        for (int i = 0; i < 3; i++) {
+            System.out.println(board[i][0] + " | " + board[i][1] + " | " + board[i][2]);
+            if (i < 2)
+                System.out.println("--+---+--");
+        }
+        System.out.println("\n");
     }
 
-    public void turn() {
-        int turn;
-        int player = 0;
-        int count = 0;
+    private static void place(String index) {
+        int move = Integer.parseInt(index);
+        int row = (move - 1) / 3;
+        int column = (move - 1) % 3;
+        board[row][column] = player;
+        layout();
+    }
+
+    private void turn() {
         while (true) {
-            if (player == 0)// change the prompt depending on players turn
-                System.out.print(" Player 1 - enter your move(0-9):\n");
-            else
-                System.out.print(" Player 2 - enter your move(0-9):\n");
-            turn = input.nextInt();// input validation and space check
-            while (turn < 1 || turn > 9 || isempty(board, turn) == false) {
-                System.out.println("Invalid move. Enter your move: ");
-                turn = input.nextInt();
+            System.out.print(String.format("Player %c, make your move(0-9): ", player));
+            String turn = input.next();
+            while (!isvalid(turn)) {
+                layout();
+                System.out.print(String.format("Invalid move player %c.\n Enter your move :", player));
+                turn = input.next();
             }
-            if (player == 0) {
-                player = 1;
-                switch (turn) {
-                    case 1 -> board[0][0] = 'X';
-                    case 2 -> board[0][1] = 'X';
-                    case 3 -> board[0][2] = 'X';
-                    case 4 -> board[1][0] = 'X';
-                    case 5 -> board[1][1] = 'X';
-                    case 6 -> board[1][2] = 'X';
-                    case 7 -> board[2][0] = 'X';
-                    case 8 -> board[2][1] = 'X';
-                    case 9 -> board[2][2] = 'X';
-                }
-            } else {
-                player = 0;
-                switch (turn) {
-                    case 1 -> board[0][0] = 'O';
-                    case 2 -> board[0][1] = 'O';
-                    case 3 -> board[0][2] = 'O';
-                    case 4 -> board[1][0] = 'O';
-                    case 5 -> board[1][1] = 'O';
-                    case 6 -> board[1][2] = 'O';
-                    case 7 -> board[2][0] = 'O';
-                    case 8 -> board[2][1] = 'O';
-                    case 9 -> board[2][2] = 'O';
-                }
+            place(turn);
+            if (winner() == true || isdraw()) {
+                if (winner() == true)
+                    System.out.print(String.format("PLayer %c Wins!!\n", player));
+                System.out.println("Play again?");
+                String query = input.next();
+                if (again(query) == true)
+                    continue;
+                else
+                    System.exit(0);
             }
-            layout();
-            winner(board);
-            count++;
-            if (count == 9) {
-                System.out.print("draw!");
-                System.exit(0);
-            }
+            playerswitch();
         }
     }
 
     public static void main(String[] args) {
         tictactoe bob = new tictactoe();
         System.out.print("Welcome to TicTacToe!!!!\n");
-        bob.layout();
         bob.turn();
     }
 }
