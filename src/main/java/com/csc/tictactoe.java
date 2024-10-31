@@ -35,13 +35,13 @@ public class tictactoe {
     }
 
     private boolean again() {
-        System.out.println("Play again?\n(1) Yes\n(2) No");
-        int query = input.nextInt();
-        while (query != 1 && query != 2) {
-            System.out.print("Invalid option.\n\"Play again?\n(1) Yes\n(2) No\n");
-            query = input.nextInt();
+        System.out.println("Play again?\n(y): Yes\n(n): No");
+        String query = input.next();
+        while (!"y".equals(query) && !"n".equals(query)) {
+            System.out.print("Invalid option.\n\"Play again?\n(1): Yes\n(2): No\n");
+            query = input.next();
         }
-        if (query == 1) {
+        if ("y".equals(query)) {
             int count = 1;
             for (int i = 0; i < 3; i++)
                 for (int j = 0; j < 3; j++) {
@@ -50,6 +50,7 @@ public class tictactoe {
                 }
             if (player == 'O')
                 playerswitch();
+            layout();
             return true;
         }
         return false;
@@ -89,6 +90,8 @@ public class tictactoe {
         int min = 1;
         int limit = 10;
         String number = Integer.toString(random.nextInt((limit - min) + min));
+        while (!isvalid(number))
+            number = Integer.toString(random.nextInt((limit - min) + min));
         return number;
     }
 
@@ -103,28 +106,23 @@ public class tictactoe {
                 turn = input.next();
             }
             place(turn);
-            if (winner() == true || isdraw() == true) {
+            if (winner() == true || isdraw()) {
                 if (winner() == true)
                     System.out.print(String.format("Player %c Wins!!\n", player));
-                if (again() == true) {
-                    layout();
+                if (again() == true)
                     continue;
-                } else
+                else
                     System.exit(0);
             }
             playerswitch();
             if (choice == 2) {
                 String set = randomgenerator();
-                while (!isvalid(set))
-                    set = randomgenerator();
                 System.out.print(String.format("The Computer has moved to %s\n", set));
                 place(set);
                 if (winner() == true || isdraw()) {
                     if (winner() == true)
                         System.out.print(String.format("Player %c Wins!!\n", player));
                     if (again() == true) {
-                        layout();
-                        continue;
                     } else
                         System.exit(0);
                 }
@@ -144,6 +142,5 @@ public class tictactoe {
             System.out.print("Let's Play!!");
             bob.turn(option);
         }
-
     }
 }
