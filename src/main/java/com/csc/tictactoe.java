@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class tictactoe {
     Scanner input = new Scanner(System.in);
     private static char player = 'X';
-    private static final char[][] board = { { '1', '2', '3' },{ '4', '5', '6' },{ '7', '8', '9' } };
+    private static final char[][] board = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
 
     public static boolean winner() {
         for (int i = 0; i < 3; i++) {
@@ -57,7 +57,7 @@ public class tictactoe {
     }
 
     private static boolean isvalid(String turn) {
-        if (!Character.isDigit(turn.charAt(0)))
+        if (!Character.isDigit(turn.charAt(0)) || turn.length() != 1)
             return false;
         int move = Integer.parseInt(turn);
         if (move < 1 || move > 9)
