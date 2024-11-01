@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class tictactoe {
     Scanner input = new Scanner(System.in);
     private static char player = 'X';
-    private static final char[][] board = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
+    private static final char[][] board = { { '1', '2', '3' },{ '4', '5', '6' },{ '7', '8', '9' } };
 
     public static boolean winner() {
         for (int i = 0; i < 3; i++) {
@@ -28,10 +28,10 @@ public class tictactoe {
     }
 
     private static void playerswitch() {
-        if (player == 'X')
-            player = 'O';
-        else
+        if (player == 'O')
             player = 'X';
+        else
+            player = 'O';
     }
 
     private boolean again() {
@@ -107,9 +107,9 @@ public class tictactoe {
             }
             place(turn);
             if (winner() == true || isdraw()) {
-                if (winner() == true)
+                if (winner())
                     System.out.print(String.format("Player %c Wins!!\n", player));
-                if (again() == true)
+                if (again())
                     continue;
                 else
                     System.exit(0);
@@ -120,13 +120,12 @@ public class tictactoe {
                 System.out.print(String.format("The Computer has moved to %s\n", set));
                 place(set);
                 if (winner() == true || isdraw()) {
-                    if (winner() == true)
+                    if (winner())
                         System.out.print(String.format("Player %c Wins!!\n", player));
-                    if (again() == true) {
+                    if (again()) {
                     } else
                         System.exit(0);
                 }
-                playerswitch();
             }
         }
     }
