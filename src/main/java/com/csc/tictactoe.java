@@ -5,7 +5,9 @@ import java.util.Scanner;
 
 public class tictactoe {
     Scanner input = new Scanner(System.in);
-    private static char player = 'X';
+    private static char player = ' ';
+    private static char P1 = ' ';
+    private static char P2 = ' ';
     private static final char[][] board = { { '1', '2', '3' }, { '4', '5', '6' }, { '7', '8', '9' } };
 
     public static boolean winner() {
@@ -21,17 +23,17 @@ public class tictactoe {
     public static boolean isdraw() {
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++)
-                if (board[i][j] != 'X' && board[i][j] != 'O')
+                if (board[i][j] != P1 && board[i][j] != P2)
                     return false;
         System.out.print("Draw!!\n");
         return true;
     }
 
     private static void playerswitch() {
-        if (player == 'O')
-            player = 'X';
+        if (player == P2)
+            player = P1;
         else
-            player = 'O';
+            player = P2;
     }
 
     private boolean again() {
@@ -48,7 +50,7 @@ public class tictactoe {
                     board[i][j] = (char) ((char) count + '0');
                     count += 1;
                 }
-            if (player == 'O')
+            if (player == P2)
                 playerswitch();
             layout();
             return true;
@@ -64,7 +66,7 @@ public class tictactoe {
             return false;
         int row = (move - 1) / 3;
         int column = (move - 1) % 3;
-        return board[row][column] != 'X' && board[row][column] != 'O';
+        return board[row][column] != P1 && board[row][column] != P2;
     }
 
     public static void layout() {
@@ -85,7 +87,7 @@ public class tictactoe {
         layout();
     }
 
-    public String randomgenerator() {
+    public static String randomgenerator() {
         Random random = new Random();
         int min = 1;
         int limit = 10;
@@ -95,8 +97,22 @@ public class tictactoe {
         return number;
     }
 
+    public void computer() {
+        String set = randomgenerator();
+        System.out.print(String.format("The Computer has moved to %s\n", set));
+        place(set);
+        if (winner() || isdraw()) {
+            if (winner())
+                System.out.print(String.format("Player %c Wins!!\n", player));
+            if (!again())
+                System.exit(0);
+        } else
+            playerswitch();
+    }
+
     private void turn(int choice) {
         layout();
+        tictactoe.player = P1;
         while (true) {
             System.out.print(String.format("Player %c, make your move(1-9): ", player));
             String turn = input.next();
@@ -106,7 +122,7 @@ public class tictactoe {
                 turn = input.next();
             }
             place(turn);
-            if (winner() == true || isdraw()) {
+            if (winner() || isdraw()) {
                 if (winner())
                     System.out.print(String.format("Player %c Wins!!\n", player));
                 if (again())
@@ -115,18 +131,8 @@ public class tictactoe {
                     System.exit(0);
             }
             playerswitch();
-            if (choice == 2) {
-                String set = randomgenerator();
-                System.out.print(String.format("The Computer has moved to %s\n", set));
-                place(set);
-                if (winner() == true || isdraw()) {
-                    if (winner())
-                        System.out.print(String.format("Player %c Wins!!\n", player));
-                    if (again()) {
-                    } else
-                        System.exit(0);
-                }
-            }
+            if (choice == 2)
+                computer();
         }
     }
 
@@ -134,11 +140,27 @@ public class tictactoe {
         tictactoe bob = new tictactoe();
         try (Scanner choice = new Scanner(System.in)) {
             int option;
-            System.out.print("Welcome to TicTacToe!!!!\n");
-            System.out.print("Choose a game mode:\n");
-            System.out.print("(1) Human vs. Human\n(2) Human vs Computer\n");
+            String C1;
+            String C2;
+            System.out.print("enter your custom markers for P1 and P2('Default' for X and O): ");
+            C1 = choice.next();
+            C2 = choice.next();
+            if (C1.contains("Default") || C2.contains("Default")) {
+                C1 = "X";
+                C2 = "O";
+            }
+            while (C1.length() != 1 || C1.contains(" ") || C2.length() != 1
+                    || C2.contains(" ") || C1.equals(C2)) {
+                System.out.print("Invalid Markers. Enter your markers: ");
+                C1 = choice.next();
+                C2 = choice.next();
+            }
+            System.out.print(
+                    "Welcome to TicTacToe!!!!\nChoose a game mode:\n(1) Human vs. Human\n(2) Human vs Computer\n");
             option = choice.nextInt();
             System.out.print("Let's Play!!");
+            tictactoe.P1 = C1.charAt(0);
+            tictactoe.P2 = C2.charAt(0);
             bob.turn(option);
         }
     }
